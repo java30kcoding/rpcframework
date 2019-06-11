@@ -178,3 +178,51 @@ Java领域：
 
 ​	见github
 
+## 服务端设计
+
+​	客户端的请求过来，服务端首先需要通过RPCServer接收请求。
+
+![](C:\Users\yuanyulou\AppData\Roaming\Typora\typora-user-images\1560250310286.png)
+
+## 设计服务端-思考
+
+1.RPCServer接收到客户端请求后，还需要做哪些工作？
+
+![](http://prvyof0n9.bkt.clouddn.com/rpc9.png)
+
+> 网络层在RPCServer中提供多线程来处理请求，消息协议层复用客户端设计的。
+>
+> (设计一个请求处理类，来完成网络层以上的事情。)
+
+​	RCPServer接收到请求后，将请求交给RequestHandler来处理，RequestHandler调用协议层来解组请求消息为Request对象，然后调用过程。
+
+![](http://prvyof0n9.bkt.clouddn.com/rpc10.png)
+
+2.RequestHandler如何得到过程对象？
+
+​	通过过程注册，和暴露。
+
+3.Request中有什么？
+
+​	服务名、方法名、参数类型、参数值
+
+4.是否需要一个过程注册模块？
+
+​	需要，维护一个服务名和服务对象的关系。
+
+![](http://prvyof0n9.bkt.clouddn.com/rpc11.png)
+
+- 过程注册模块：让用户将他们的过程注册到RPC框架中来。
+- 过程暴露模块：想对外发布(暴露)服务注册、暴露可以由同一个类实现。
+
+## 设计服务端-完整类图
+
+![](http://prvyof0n9.bkt.clouddn.com/rpc12.png)
+
+## 实现服务端
+
+1.RPCServer中实现网络层：Netty，使用RequestHandler。
+
+2.ServiceRegister模块实现服务注册、发布。
+
+3.RequestHandler中实现消息协议处理、过程调用。
